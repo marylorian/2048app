@@ -12,6 +12,7 @@
     "build:android": "npx eas-cli build --platform android --profile production",
     "build:android:apk": "npx eas-cli build --platform android --profile preview",
     "build:ios": "npx eas-cli build --platform ios --profile production",
+    "build:ios:simulator": "npx eas-cli build --platform ios --profile simulator",
     "build:native": "npx eas-cli build --platform all --profile production"
   },
   "dependencies": {

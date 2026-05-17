@@ -20,3 +20,11 @@ npm run build:ios
 ```
 
 Native builds use EAS Build. Run `npx eas-cli login` first if you are not signed in.
+
+Useful native variants:
+
+```sh
+npm run build:android:apk
+npm run build:ios:simulator
+npm run build:native
+```
