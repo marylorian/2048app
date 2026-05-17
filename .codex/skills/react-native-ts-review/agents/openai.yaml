@@ -1,0 +1,7 @@
+interface:
+  display_name: "React Native TypeScript Review"
+  short_description: "Review RN TypeScript apps"
+  default_prompt: "Use $react-native-ts-review to review this React Native TypeScript app using current best practices and return prioritized findings."
+
+policy:
+  allow_implicit_invocation: true
