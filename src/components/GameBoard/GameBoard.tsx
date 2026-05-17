@@ -40,6 +40,7 @@ export function GameBoard({
           gap
         }
       ]}
+      testID="game-board"
     >
       {Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, index) => (
         <View

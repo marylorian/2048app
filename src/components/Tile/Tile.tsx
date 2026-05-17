@@ -60,6 +60,7 @@ export function Tile({
 
   return (
     <Animated.View
+      accessibilityLabel={`${value} tile at row ${row + 1}, column ${col + 1}`}
       style={[
         styles.tile,
         {
@@ -71,6 +72,7 @@ export function Tile({
           transform: [{ scale: tileScaleRef.current }]
         }
       ]}
+      testID={`tile-${row}-${col}`}
     >
       <Text style={[styles.tileText, { color: color.text, fontSize }]}>
         {value}

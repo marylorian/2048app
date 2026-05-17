@@ -19,5 +19,17 @@ module.exports = defineConfig([
     rules: {
       "@typescript-eslint/no-require-imports": "off"
     }
+  },
+  {
+    files: ["cypress/**/*.ts"],
+    languageOptions: {
+      globals: {
+        cy: "readonly",
+        Cypress: "readonly",
+        describe: "readonly",
+        expect: "readonly",
+        it: "readonly"
+      }
+    }
   }
 ]);

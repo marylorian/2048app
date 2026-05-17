@@ -34,7 +34,12 @@ export function WinModal({ visible, onContinue, onRestart }: WinModalProps) {
       animationType="none"
       onRequestClose={onContinue}
     >
-      <View style={styles.modalBackdrop}>
+      <View
+        accessibilityLabel="2048 congratulations dialog"
+        accessibilityViewIsModal
+        style={styles.modalBackdrop}
+        testID="win-modal"
+      >
         <Animated.View
           style={[
             styles.winModal,

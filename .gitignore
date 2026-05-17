@@ -5,3 +5,5 @@ storybook-static
 coverage
 android
 ios
+cypress/screenshots
+cypress/videos

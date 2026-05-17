@@ -7,17 +7,19 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#bbada0",
+    backgroundColor: "#776e65",
     paddingHorizontal: 10
   },
   scoreLabel: {
-    color: "#eee4da",
+    backgroundColor: "#776e65",
+    color: "#ffffff",
     fontSize: 13,
     fontWeight: "800",
     textTransform: "uppercase"
   },
   scoreValue: {
     color: "#ffffff",
+    backgroundColor: "#776e65",
     fontSize: 25,
     fontWeight: "900"
   }

@@ -6,3 +6,5 @@ coverage
 android
 ios
 package-lock.json
+cypress/screenshots
+cypress/videos

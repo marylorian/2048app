@@ -22,6 +22,7 @@ export function GameOverOverlay({ onRestart }: GameOverOverlayProps) {
 
   return (
     <Animated.View
+      accessibilityLabel="Game over"
       style={[
         styles.overlay,
         {
@@ -36,6 +37,7 @@ export function GameOverOverlay({ onRestart }: GameOverOverlayProps) {
           ]
         }
       ]}
+      testID="game-over-overlay"
     >
       <Text style={styles.overlayTitle}>Game over</Text>
       <Pressable
