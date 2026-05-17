@@ -1,3 +1,7 @@
 node_modules
 .expo
-dist 
+dist
+storybook-static
+coverage
+android
+ios

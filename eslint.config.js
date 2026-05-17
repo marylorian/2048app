@@ -9,6 +9,7 @@ module.exports = defineConfig([
       "node_modules/**",
       ".expo/**",
       "coverage/**",
+      "storybook-static/**",
       "android/**",
       "ios/**"
     ]
