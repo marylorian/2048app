@@ -1,8 +1,13 @@
 import { View } from "react-native";
+import type { Direction } from "../../types";
 import { ArrowButton } from "../ArrowButton";
 import { styles } from "./styles";
 
-export function ArrowControls({ onMove }) {
+type ArrowControlsProps = {
+  onMove: (direction: Direction) => void;
+};
+
+export function ArrowControls({ onMove }: ArrowControlsProps) {
   return (
     <View style={styles.controls}>
       <ArrowButton name="chevron-up" onPress={() => onMove("up")} />

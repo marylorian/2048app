@@ -4,7 +4,23 @@ import { TILE_COLORS } from "../../constants";
 import { styles } from "./styles";
 import { getTileFontSize } from "./utils";
 
-export function Tile({ value, size, row, col, gap, hidden = false }) {
+type TileProps = {
+  value: number;
+  size: number;
+  row: number;
+  col: number;
+  gap: number;
+  hidden?: boolean;
+};
+
+export function Tile({
+  value,
+  size,
+  row,
+  col,
+  gap,
+  hidden = false
+}: TileProps) {
   const tileScaleRef = useRef(new Animated.Value(value ? 1 : 0.92));
   const color = TILE_COLORS[value] ?? {
     background: "#3c3a32",

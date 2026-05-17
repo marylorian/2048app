@@ -7,7 +7,12 @@ export const SWIPE_THRESHOLD = 24;
 export const SLIDE_DURATION = 120;
 export const BEST_SCORE_STORAGE_KEY = "react-native-2048:best-score";
 
-export const TILE_COLORS = {
+export type TileColor = {
+  background: string;
+  text: string;
+};
+
+export const TILE_COLORS: Record<number, TileColor> = {
   2: { background: "#eee4da", text: "#776e65" },
   4: { background: "#ede0c8", text: "#776e65" },
   8: { background: "#f2b179", text: "#f9f6f2" },

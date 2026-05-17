@@ -1,4 +1,4 @@
-export function getTileFontSize(value) {
+export function getTileFontSize(value: number): number {
   if (value >= 1024) {
     return 28;
   }

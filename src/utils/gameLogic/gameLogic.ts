@@ -1,21 +1,22 @@
 import { BOARD_SIZE, WIN_TILE } from "../../constants";
+import type { Board, CellPosition, Direction, SlideTile } from "../../types";
 
-function createEmptyBoard() {
+function createEmptyBoard(): Board {
   return Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
 }
 
-function cloneBoard(board) {
+function cloneBoard(board: Board): Board {
   return board.map((row) => [...row]);
 }
 
-function boardsEqual(a, b) {
+function boardsEqual(a: Board, b: Board): boolean {
   return a.every((row, rowIndex) =>
     row.every((value, colIndex) => value === b[rowIndex][colIndex])
   );
 }
 
-function getEmptyCells(board) {
-  const cells = [];
+function getEmptyCells(board: Board): CellPosition[] {
+  const cells: CellPosition[] = [];
 
   board.forEach((row, rowIndex) => {
     row.forEach((value, colIndex) => {
@@ -28,7 +29,7 @@ function getEmptyCells(board) {
   return cells;
 }
 
-export function addRandomTile(board) {
+export function addRandomTile(board: Board): Board {
   const nextBoard = cloneBoard(board);
   const emptyCells = getEmptyCells(nextBoard);
 
@@ -41,14 +42,27 @@ export function addRandomTile(board) {
   return nextBoard;
 }
 
-export function createInitialBoard() {
+export function createInitialBoard(): Board {
   return addRandomTile(addRandomTile(createEmptyBoard()));
 }
 
-export function moveBoard(board, direction) {
+type MoveResult = {
+  board: Board;
+  gainedScore: number;
+  moved: boolean;
+  slideTiles: SlideTile[];
+};
+
+type SourceTile = {
+  row: number;
+  col: number;
+  value: number;
+};
+
+export function moveBoard(board: Board, direction: Direction): MoveResult {
   const nextBoard = createEmptyBoard();
   let gainedScore = 0;
-  const slideTiles = [];
+  const slideTiles: SlideTile[] = [];
 
   for (let index = 0; index < BOARD_SIZE; index += 1) {
     const positions = getTraversalPositions(index, direction);
@@ -89,7 +103,10 @@ export function moveBoard(board, direction) {
   };
 }
 
-function getTraversalPositions(index, direction) {
+function getTraversalPositions(
+  index: number,
+  direction: Direction
+): CellPosition[] {
   if (direction === "left") {
     return Array.from({ length: BOARD_SIZE }, (_, col) => [index, col]);
   }
@@ -111,7 +128,11 @@ function getTraversalPositions(index, direction) {
   ]);
 }
 
-function createSlideTile(source, target, value) {
+function createSlideTile(
+  source: SourceTile,
+  target: CellPosition,
+  value: number
+): SlideTile {
   return {
     value,
     fromRow: source.row,
@@ -121,11 +142,11 @@ function createSlideTile(source, target, value) {
   };
 }
 
-export function hasWon(board) {
+export function hasWon(board: Board): boolean {
   return board.some((row) => row.some((value) => value >= WIN_TILE));
 }
 
-export function hasAvailableMove(board) {
+export function hasAvailableMove(board: Board): boolean {
   if (getEmptyCells(board).length > 0) {
     return true;
   }

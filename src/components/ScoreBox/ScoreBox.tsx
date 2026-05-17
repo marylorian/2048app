@@ -1,7 +1,12 @@
 import { Text, View } from "react-native";
 import { styles } from "./styles";
 
-export function ScoreBox({ label, value }) {
+type ScoreBoxProps = {
+  label: string;
+  value: number;
+};
+
+export function ScoreBox({ label, value }: ScoreBoxProps) {
   return (
     <View style={styles.scoreBox}>
       <Text style={styles.scoreLabel}>{label}</Text>

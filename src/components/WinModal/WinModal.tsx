@@ -2,7 +2,13 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, Modal, Pressable, Text, View } from "react-native";
 import { styles } from "./styles";
 
-export function WinModal({ visible, onContinue, onRestart }) {
+type WinModalProps = {
+  visible: boolean;
+  onContinue: () => void;
+  onRestart: () => void;
+};
+
+export function WinModal({ visible, onContinue, onRestart }: WinModalProps) {
   const modalProgressRef = useRef(new Animated.Value(0));
 
   useEffect(() => {

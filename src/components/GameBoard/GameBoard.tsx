@@ -1,9 +1,21 @@
-import { Animated, View } from "react-native";
+import { Animated, View, type GestureResponderHandlers } from "react-native";
 import { BOARD_SIZE } from "../../constants";
+import type { AnimatedSlideTile, Board } from "../../types";
 import { GameOverOverlay } from "../GameOverOverlay";
 import { SlidingTile } from "../SlidingTile";
 import { Tile } from "../Tile";
 import { styles } from "./styles";
+
+type GameBoardProps = {
+  board: Board;
+  movingTiles: AnimatedSlideTile[];
+  panHandlers: GestureResponderHandlers;
+  size: number;
+  tileSize: number;
+  gap: number;
+  isGameOver: boolean;
+  onRestart: () => void;
+};
 
 export function GameBoard({
   board,
@@ -14,7 +26,7 @@ export function GameBoard({
   gap,
   isGameOver,
   onRestart
-}) {
+}: GameBoardProps) {
   return (
     <Animated.View
       {...panHandlers}

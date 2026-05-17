@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { BEST_SCORE_STORAGE_KEY } from "../../constants";
 
-export async function loadStoredBestScore() {
+export async function loadStoredBestScore(): Promise<number> {
   try {
     const rawValue =
       Platform.OS === "web"
@@ -16,7 +16,7 @@ export async function loadStoredBestScore() {
   }
 }
 
-export async function storeBestScore(value) {
+export async function storeBestScore(value: number): Promise<void> {
   try {
     const stringValue = String(value);
 

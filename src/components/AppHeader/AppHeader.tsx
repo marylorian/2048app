@@ -2,7 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 import { styles } from "./styles";
 
-export function AppHeader({ onRestart }) {
+type AppHeaderProps = {
+  onRestart: () => void;
+};
+
+export function AppHeader({ onRestart }: AppHeaderProps) {
   return (
     <View style={styles.header}>
       <View>

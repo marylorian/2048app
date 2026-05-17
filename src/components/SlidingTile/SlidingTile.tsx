@@ -1,9 +1,16 @@
 import { Animated, Text } from "react-native";
 import { TILE_COLORS } from "../../constants";
+import type { AnimatedSlideTile } from "../../types";
 import { getTileFontSize } from "../Tile/utils";
 import { styles } from "./styles";
 
-export function SlidingTile({ tile, size, gap }) {
+type SlidingTileProps = {
+  tile: AnimatedSlideTile;
+  size: number;
+  gap: number;
+};
+
+export function SlidingTile({ tile, size, gap }: SlidingTileProps) {
   const color = TILE_COLORS[tile.value] ?? {
     background: "#3c3a32",
     text: "#f9f6f2"

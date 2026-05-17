@@ -4,6 +4,7 @@ import {
   Animated,
   Easing,
   PanResponder,
+  type PanResponderGestureState,
   Platform,
   useWindowDimensions,
   View
@@ -28,6 +29,12 @@ import {
   hasWon,
   moveBoard
 } from "../../utils/gameLogic";
+import type {
+  AnimatedSlideTile,
+  Board,
+  Direction,
+  GameState
+} from "../../types";
 import { AppHeader } from "../AppHeader";
 import { ArrowControls } from "../ArrowControls";
 import { GameBoard } from "../GameBoard";
@@ -36,11 +43,11 @@ import { WinModal } from "../WinModal";
 import { styles } from "./styles";
 
 export function App() {
-  const [board, setBoard] = useState(createInitialBoard);
+  const [board, setBoard] = useState<Board>(createInitialBoard);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
-  const [gameState, setGameState] = useState("playing");
-  const [movingTiles, setMovingTiles] = useState([]);
+  const [gameState, setGameState] = useState<GameState>("playing");
+  const [movingTiles, setMovingTiles] = useState<AnimatedSlideTile[]>([]);
   const [hasFinePointer, setHasFinePointer] = useState(false);
   const hasShownWinAlert = useRef(false);
   const isAnimating = useRef(false);
@@ -91,7 +98,7 @@ export function App() {
     };
   }, []);
 
-  const finishMove = useCallback((nextBoard) => {
+  const finishMove = useCallback((nextBoard: Board) => {
     if (hasWon(nextBoard) && !hasShownWinAlert.current) {
       hasShownWinAlert.current = true;
       setGameState("won");
@@ -104,7 +111,7 @@ export function App() {
   }, []);
 
   const handleMove = useCallback(
-    (direction) => {
+    (direction: Direction) => {
       if (gameState !== "playing" || isAnimating.current) {
         return;
       }
@@ -175,10 +182,13 @@ export function App() {
   const panResponder = useMemo(
     () =>
       PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) =>
+        onMoveShouldSetPanResponder: (
+          _,
+          gestureState: PanResponderGestureState
+        ) =>
           Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
           Math.abs(gestureState.dy) > SWIPE_THRESHOLD,
-        onPanResponderRelease: (_, gestureState) => {
+        onPanResponderRelease: (_, gestureState: PanResponderGestureState) => {
           const { dx, dy } = gestureState;
 
           if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
@@ -205,14 +215,14 @@ export function App() {
       return undefined;
     }
 
-    const keyToDirection = {
+    const keyToDirection: Partial<Record<string, Direction>> = {
       ArrowUp: "up",
       ArrowRight: "right",
       ArrowDown: "down",
       ArrowLeft: "left"
     };
 
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       const direction = keyToDirection[event.key];
 
       if (!direction) {

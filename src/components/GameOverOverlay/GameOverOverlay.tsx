@@ -2,7 +2,11 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, Pressable, Text } from "react-native";
 import { styles } from "./styles";
 
-export function GameOverOverlay({ onRestart }) {
+type GameOverOverlayProps = {
+  onRestart: () => void;
+};
+
+export function GameOverOverlay({ onRestart }: GameOverOverlayProps) {
   const overlayProgressRef = useRef(new Animated.Value(0));
 
   useEffect(() => {
