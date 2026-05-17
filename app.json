@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "2048",
+    "slug": "react-native-2048",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#f6f2e9"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.mariialobareva.reactnative2048",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.mariialobareva.reactnative2048"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

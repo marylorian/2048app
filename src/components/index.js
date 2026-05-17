@@ -1,0 +1,10 @@
+export { App } from "./App";
+export { AppHeader } from "./AppHeader";
+export { ArrowButton } from "./ArrowButton";
+export { ArrowControls } from "./ArrowControls";
+export { GameBoard } from "./GameBoard";
+export { GameOverOverlay } from "./GameOverOverlay";
+export { ScoreBox } from "./ScoreBox";
+export { SlidingTile } from "./SlidingTile";
+export { Tile } from "./Tile";
+export { WinModal } from "./WinModal";
