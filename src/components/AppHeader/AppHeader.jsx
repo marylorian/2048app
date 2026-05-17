@@ -12,6 +12,8 @@ export function AppHeader({ onRestart }) {
 
       <Pressable
         accessibilityLabel="Start a new game"
+        accessibilityRole="button"
+        hitSlop={8}
         onPress={onRestart}
         style={({ pressed }) => [
           styles.iconButton,

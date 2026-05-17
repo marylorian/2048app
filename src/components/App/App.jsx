@@ -1,15 +1,22 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
   PanResponder,
   Platform,
-  SafeAreaView,
   useWindowDimensions,
   View
 } from "react-native";
-import { BOARD_SIZE, SLIDE_DURATION, SWIPE_THRESHOLD } from "../../constants";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import {
+  BOARD_GAP,
+  BOARD_HORIZONTAL_MARGIN,
+  BOARD_MAX_PIXEL_SIZE,
+  BOARD_SIZE,
+  SLIDE_DURATION,
+  SWIPE_THRESHOLD
+} from "../../constants";
 import {
   loadStoredBestScore,
   storeBestScore
@@ -40,8 +47,11 @@ export function App() {
   const moveId = useRef(0);
   const { width } = useWindowDimensions();
 
-  const boardPixelSize = Math.min(width - 32, 390);
-  const gap = 10;
+  const boardPixelSize = Math.min(
+    width - BOARD_HORIZONTAL_MARGIN,
+    BOARD_MAX_PIXEL_SIZE
+  );
+  const gap = BOARD_GAP;
   const tileSize = (boardPixelSize - gap * (BOARD_SIZE + 1)) / BOARD_SIZE;
   const shouldShowArrowControls = Platform.OS === "web" && hasFinePointer;
 
@@ -67,7 +77,8 @@ export function App() {
     const finePointerQuery = window.matchMedia("(pointer: fine)");
 
     function syncPointerType() {
-      setHasFinePointer(finePointerQuery.matches);
+      const hasTouchScreen = window.navigator.maxTouchPoints > 0;
+      setHasFinePointer(finePointerQuery.matches && !hasTouchScreen);
     }
 
     syncPointerType();
@@ -80,62 +91,19 @@ export function App() {
     };
   }, []);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) =>
-          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
-          Math.abs(gestureState.dy) > SWIPE_THRESHOLD,
-        onPanResponderRelease: (_, gestureState) => {
-          const { dx, dy } = gestureState;
-
-          if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
-            return;
-          }
-
-          const direction =
-            Math.abs(dx) > Math.abs(dy)
-              ? dx > 0
-                ? "right"
-                : "left"
-              : dy > 0
-                ? "down"
-                : "up";
-
-          handleMove(direction);
-        }
-      }),
-    [board, gameState, movingTiles.length]
-  );
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return undefined;
+  const finishMove = useCallback((nextBoard) => {
+    if (hasWon(nextBoard) && !hasShownWinAlert.current) {
+      hasShownWinAlert.current = true;
+      setGameState("won");
+      return;
     }
 
-    const keyToDirection = {
-      ArrowUp: "up",
-      ArrowRight: "right",
-      ArrowDown: "down",
-      ArrowLeft: "left"
-    };
-
-    function handleKeyDown(event) {
-      const direction = keyToDirection[event.key];
-
-      if (!direction) {
-        return;
-      }
-
-      event.preventDefault();
-      handleMove(direction);
+    if (!hasAvailableMove(nextBoard)) {
+      setGameState("lost");
     }
+  }, []);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [board, score, bestScore, gameState, movingTiles.length]);
-
-  function handleMove(direction) {
+  const handleMove = useCallback((direction) => {
     if (gameState !== "playing" || isAnimating.current) {
       return;
     }
@@ -199,9 +167,64 @@ export function App() {
       isAnimating.current = false;
       finishMove(nextBoard);
     });
-  }
+  }, [bestScore, board, finishMove, gameState, gap, score, tileSize]);
 
-  function startNewGame() {
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
+          Math.abs(gestureState.dy) > SWIPE_THRESHOLD,
+        onPanResponderRelease: (_, gestureState) => {
+          const { dx, dy } = gestureState;
+
+          if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
+            return;
+          }
+
+          const direction =
+            Math.abs(dx) > Math.abs(dy)
+              ? dx > 0
+                ? "right"
+                : "left"
+              : dy > 0
+                ? "down"
+                : "up";
+
+          handleMove(direction);
+        }
+      }),
+    [handleMove]
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const keyToDirection = {
+      ArrowUp: "up",
+      ArrowRight: "right",
+      ArrowDown: "down",
+      ArrowLeft: "left"
+    };
+
+    function handleKeyDown(event) {
+      const direction = keyToDirection[event.key];
+
+      if (!direction) {
+        return;
+      }
+
+      event.preventDefault();
+      handleMove(direction);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleMove]);
+
+  const startNewGame = useCallback(() => {
     moveId.current += 1;
     isAnimating.current = false;
     setMovingTiles([]);
@@ -209,50 +232,40 @@ export function App() {
     setScore(0);
     setGameState("playing");
     hasShownWinAlert.current = false;
-  }
-
-  function finishMove(nextBoard) {
-    if (hasWon(nextBoard) && !hasShownWinAlert.current) {
-      hasShownWinAlert.current = true;
-      setGameState("won");
-      return;
-    }
-
-    if (!hasAvailableMove(nextBoard)) {
-      setGameState("lost");
-    }
-  }
+  }, []);
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <StatusBar style="dark" />
-      <View style={styles.container}>
-        <AppHeader onRestart={startNewGame} />
+    <SafeAreaProvider>
+      <SafeAreaView edges={["top", "right", "bottom", "left"]} style={styles.screen}>
+        <StatusBar style="dark" />
+        <View style={styles.container}>
+          <AppHeader onRestart={startNewGame} />
 
-        <View style={styles.scoreRow}>
-          <ScoreBox label="Score" value={score} />
-          <ScoreBox label="Best" value={bestScore} />
+          <View style={styles.scoreRow}>
+            <ScoreBox label="Score" value={score} />
+            <ScoreBox label="Best" value={bestScore} />
+          </View>
+
+          <GameBoard
+            board={board}
+            movingTiles={movingTiles}
+            panHandlers={panResponder.panHandlers}
+            size={boardPixelSize}
+            tileSize={tileSize}
+            gap={gap}
+            isGameOver={gameState === "lost"}
+            onRestart={startNewGame}
+          />
+
+          {shouldShowArrowControls && <ArrowControls onMove={handleMove} />}
+
+          <WinModal
+            visible={gameState === "won"}
+            onContinue={() => setGameState("playing")}
+            onRestart={startNewGame}
+          />
         </View>
-
-        <GameBoard
-          board={board}
-          movingTiles={movingTiles}
-          panHandlers={panResponder.panHandlers}
-          size={boardPixelSize}
-          tileSize={tileSize}
-          gap={gap}
-          isGameOver={gameState === "lost"}
-          onRestart={startNewGame}
-        />
-
-        {shouldShowArrowControls && <ArrowControls onMove={handleMove} />}
-
-        <WinModal
-          visible={gameState === "won"}
-          onContinue={() => setGameState("playing")}
-          onRestart={startNewGame}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

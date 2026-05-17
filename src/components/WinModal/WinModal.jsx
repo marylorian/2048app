@@ -27,7 +27,12 @@ export function WinModal({ visible, onContinue, onRestart }) {
   }, [visible]);
 
   return (
-    <Modal visible={visible} transparent animationType="none">
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      onRequestClose={onContinue}
+    >
       <View style={styles.modalBackdrop}>
         <Animated.View
           style={[
@@ -48,10 +53,18 @@ export function WinModal({ visible, onContinue, onRestart }) {
           <Text style={styles.winTitle}>2048!</Text>
           <Text style={styles.winText}>Congratulations, you made the 2048 tile.</Text>
           <View style={styles.winActions}>
-            <Pressable onPress={onContinue} style={styles.secondaryButton}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={onContinue}
+              style={styles.secondaryButton}
+            >
               <Text style={styles.secondaryButtonText}>Continue</Text>
             </Pressable>
-            <Pressable onPress={onRestart} style={styles.primaryButton}>
+            <Pressable
+              accessibilityRole="button"
+              onPress={onRestart}
+              style={styles.primaryButton}
+            >
               <Text style={styles.primaryButtonText}>Restart</Text>
             </Pressable>
           </View>

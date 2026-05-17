@@ -32,7 +32,11 @@ export function GameOverOverlay({ onRestart }) {
       ]}
     >
       <Text style={styles.overlayTitle}>Game over</Text>
-      <Pressable onPress={onRestart} style={styles.overlayButton}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onRestart}
+        style={styles.overlayButton}
+      >
         <Text style={styles.overlayButtonText}>Try again</Text>
       </Pressable>
     </Animated.View>

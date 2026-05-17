@@ -6,6 +6,7 @@ export function ArrowButton({ name, onPress }) {
   return (
     <Pressable
       accessibilityLabel={name.replace("chevron-", "Move ")}
+      accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [
         styles.arrowButton,

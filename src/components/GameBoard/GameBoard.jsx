@@ -18,6 +18,7 @@ export function GameBoard({
   return (
     <Animated.View
       {...panHandlers}
+      accessibilityLabel="2048 game board"
       style={[
         styles.board,
         {
@@ -31,6 +32,8 @@ export function GameBoard({
       {Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, index) => (
         <View
           key={`cell-${index}`}
+          accessible={false}
+          importantForAccessibility="no"
           style={[styles.boardCell, { width: tileSize, height: tileSize }]}
         />
       ))}
