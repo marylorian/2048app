@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate Expo dependencies
+        run: npm run expo:check
+
       - name: Check formatting
         run: npm run format:check
 
