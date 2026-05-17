@@ -1,18 +1,13 @@
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Modal,
-  Pressable,
-  Text,
-  View
-} from "react-native";
+import { Animated, Easing, Modal, Pressable, Text, View } from "react-native";
 import { styles } from "./styles";
 
 export function WinModal({ visible, onContinue, onRestart }) {
-  const modalProgress = useRef(new Animated.Value(0)).current;
+  const modalProgressRef = useRef(new Animated.Value(0));
 
   useEffect(() => {
+    const modalProgress = modalProgressRef.current;
+
     if (!visible) {
       modalProgress.setValue(0);
       return;
@@ -38,10 +33,10 @@ export function WinModal({ visible, onContinue, onRestart }) {
           style={[
             styles.winModal,
             {
-              opacity: modalProgress,
+              opacity: modalProgressRef.current,
               transform: [
                 {
-                  scale: modalProgress.interpolate({
+                  scale: modalProgressRef.current.interpolate({
                     inputRange: [0, 1],
                     outputRange: [0.94, 1]
                   })
@@ -51,7 +46,9 @@ export function WinModal({ visible, onContinue, onRestart }) {
           ]}
         >
           <Text style={styles.winTitle}>2048!</Text>
-          <Text style={styles.winText}>Congratulations, you made the 2048 tile.</Text>
+          <Text style={styles.winText}>
+            Congratulations, you made the 2048 tile.
+          </Text>
           <View style={styles.winActions}>
             <Pressable
               accessibilityRole="button"

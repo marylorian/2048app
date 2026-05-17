@@ -5,11 +5,16 @@ import { styles } from "./styles";
 import { getTileFontSize } from "./utils";
 
 export function Tile({ value, size, row, col, gap, hidden = false }) {
-  const tileScale = useRef(new Animated.Value(value ? 1 : 0.92)).current;
-  const color = TILE_COLORS[value] ?? { background: "#3c3a32", text: "#f9f6f2" };
+  const tileScaleRef = useRef(new Animated.Value(value ? 1 : 0.92));
+  const color = TILE_COLORS[value] ?? {
+    background: "#3c3a32",
+    text: "#f9f6f2"
+  };
   const fontSize = getTileFontSize(value);
 
   useEffect(() => {
+    const tileScale = tileScaleRef.current;
+
     if (!value) {
       tileScale.setValue(0.92);
       return;
@@ -47,7 +52,7 @@ export function Tile({ value, size, row, col, gap, hidden = false }) {
           left: gap + col * (size + gap),
           top: gap + row * (size + gap),
           backgroundColor: color.background,
-          transform: [{ scale: tileScale }]
+          transform: [{ scale: tileScaleRef.current }]
         }
       ]}
     >

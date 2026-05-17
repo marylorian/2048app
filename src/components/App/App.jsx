@@ -103,71 +103,74 @@ export function App() {
     }
   }, []);
 
-  const handleMove = useCallback((direction) => {
-    if (gameState !== "playing" || isAnimating.current) {
-      return;
-    }
-
-    const {
-      board: movedBoard,
-      gainedScore,
-      moved,
-      slideTiles
-    } = moveBoard(board, direction);
-
-    if (!moved) {
-      return;
-    }
-
-    const nextBoard = addRandomTile(movedBoard);
-    const nextScore = score + gainedScore;
-    const nextBestScore = Math.max(bestScore, nextScore);
-    const nextMoveId = moveId.current + 1;
-    const animatedTiles = slideTiles.map((tile, index) => ({
-      ...tile,
-      id: `${nextMoveId}-${index}-${tile.fromRow}-${tile.fromCol}`,
-      translateX: new Animated.Value(0),
-      translateY: new Animated.Value(0)
-    }));
-
-    moveId.current = nextMoveId;
-    isAnimating.current = true;
-    setMovingTiles(animatedTiles);
-    setScore(nextScore);
-    setBestScore(nextBestScore);
-
-    if (nextBestScore > bestScore) {
-      storeBestScore(nextBestScore);
-    }
-
-    Animated.parallel(
-      animatedTiles.map((tile) =>
-        Animated.parallel([
-          Animated.timing(tile.translateX, {
-            toValue: (tile.toCol - tile.fromCol) * (tileSize + gap),
-            duration: SLIDE_DURATION,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true
-          }),
-          Animated.timing(tile.translateY, {
-            toValue: (tile.toRow - tile.fromRow) * (tileSize + gap),
-            duration: SLIDE_DURATION,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true
-          })
-        ])
-      )
-    ).start(() => {
-      if (moveId.current !== nextMoveId) {
+  const handleMove = useCallback(
+    (direction) => {
+      if (gameState !== "playing" || isAnimating.current) {
         return;
       }
 
-      setMovingTiles([]);
-      setBoard(nextBoard);
-      isAnimating.current = false;
-      finishMove(nextBoard);
-    });
-  }, [bestScore, board, finishMove, gameState, gap, score, tileSize]);
+      const {
+        board: movedBoard,
+        gainedScore,
+        moved,
+        slideTiles
+      } = moveBoard(board, direction);
+
+      if (!moved) {
+        return;
+      }
+
+      const nextBoard = addRandomTile(movedBoard);
+      const nextScore = score + gainedScore;
+      const nextBestScore = Math.max(bestScore, nextScore);
+      const nextMoveId = moveId.current + 1;
+      const animatedTiles = slideTiles.map((tile, index) => ({
+        ...tile,
+        id: `${nextMoveId}-${index}-${tile.fromRow}-${tile.fromCol}`,
+        translateX: new Animated.Value(0),
+        translateY: new Animated.Value(0)
+      }));
+
+      moveId.current = nextMoveId;
+      isAnimating.current = true;
+      setMovingTiles(animatedTiles);
+      setScore(nextScore);
+      setBestScore(nextBestScore);
+
+      if (nextBestScore > bestScore) {
+        storeBestScore(nextBestScore);
+      }
+
+      Animated.parallel(
+        animatedTiles.map((tile) =>
+          Animated.parallel([
+            Animated.timing(tile.translateX, {
+              toValue: (tile.toCol - tile.fromCol) * (tileSize + gap),
+              duration: SLIDE_DURATION,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true
+            }),
+            Animated.timing(tile.translateY, {
+              toValue: (tile.toRow - tile.fromRow) * (tileSize + gap),
+              duration: SLIDE_DURATION,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true
+            })
+          ])
+        )
+      ).start(() => {
+        if (moveId.current !== nextMoveId) {
+          return;
+        }
+
+        setMovingTiles([]);
+        setBoard(nextBoard);
+        isAnimating.current = false;
+        finishMove(nextBoard);
+      });
+    },
+    [bestScore, board, finishMove, gameState, gap, score, tileSize]
+  );
 
   const panResponder = useMemo(
     () =>
@@ -236,7 +239,10 @@ export function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView edges={["top", "right", "bottom", "left"]} style={styles.screen}>
+      <SafeAreaView
+        edges={["top", "right", "bottom", "left"]}
+        style={styles.screen}
+      >
         <StatusBar style="dark" />
         <View style={styles.container}>
           <AppHeader onRestart={startNewGame} />

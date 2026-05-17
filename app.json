@@ -8,9 +8,7 @@
     "splash": {
       "backgroundColor": "#f6f2e9"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.mariialobareva.reactnative2048",
       "supportsTablet": true
@@ -21,8 +19,6 @@
     "web": {
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-font"
-    ]
+    "plugins": ["expo-font"]
   }
 }

@@ -3,9 +3,11 @@ import { Animated, Easing, Pressable, Text } from "react-native";
 import { styles } from "./styles";
 
 export function GameOverOverlay({ onRestart }) {
-  const overlayProgress = useRef(new Animated.Value(0)).current;
+  const overlayProgressRef = useRef(new Animated.Value(0));
 
   useEffect(() => {
+    const overlayProgress = overlayProgressRef.current;
+
     Animated.timing(overlayProgress, {
       toValue: 1,
       duration: 180,
@@ -19,10 +21,10 @@ export function GameOverOverlay({ onRestart }) {
       style={[
         styles.overlay,
         {
-          opacity: overlayProgress,
+          opacity: overlayProgressRef.current,
           transform: [
             {
-              scale: overlayProgress.interpolate({
+              scale: overlayProgressRef.current.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0.96, 1]
               })

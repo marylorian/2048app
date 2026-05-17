@@ -7,7 +7,9 @@ export function AppHeader({ onRestart }) {
     <View style={styles.header}>
       <View>
         <Text style={styles.title}>2048</Text>
-        <Text style={styles.subtitle}>Swipe tiles. Match numbers. Reach 2048.</Text>
+        <Text style={styles.subtitle}>
+          Swipe tiles. Match numbers. Reach 2048.
+        </Text>
       </View>
 
       <Pressable
