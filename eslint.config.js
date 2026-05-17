@@ -12,5 +12,11 @@ module.exports = defineConfig([
       "android/**",
       "ios/**"
     ]
+  },
+  {
+    files: ["jest.setup.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off"
+    }
   }
 ]);
