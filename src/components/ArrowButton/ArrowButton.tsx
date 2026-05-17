@@ -8,10 +8,19 @@ type ArrowButtonProps = {
   onPress: () => void;
 };
 
+const accessibilityLabels: Partial<
+  Record<ComponentProps<typeof Ionicons>["name"], string>
+> = {
+  "chevron-back": "Move left",
+  "chevron-down": "Move down",
+  "chevron-forward": "Move right",
+  "chevron-up": "Move up"
+};
+
 export function ArrowButton({ name, onPress }: ArrowButtonProps) {
   return (
     <Pressable
-      accessibilityLabel={name.replace("chevron-", "Move ")}
+      accessibilityLabel={accessibilityLabels[name] ?? "Move tile"}
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [

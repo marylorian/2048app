@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
+  type GestureResponderEvent,
   PanResponder,
   type PanResponderGestureState,
   Platform,
@@ -41,18 +42,27 @@ import { GameBoard } from "../GameBoard";
 import { ScoreBox } from "../ScoreBox";
 import { WinModal } from "../WinModal";
 import { styles } from "./styles";
+import { getE2EInitialState } from "./utils";
 
 export function App() {
-  const [board, setBoard] = useState<Board>(createInitialBoard);
-  const [score, setScore] = useState(0);
+  const initialE2EState = useRef(getE2EInitialState());
+  const [board, setBoard] = useState<Board>(
+    initialE2EState.current?.board ?? createInitialBoard
+  );
+  const [score, setScore] = useState(initialE2EState.current?.score ?? 0);
   const [bestScore, setBestScore] = useState(0);
-  const [gameState, setGameState] = useState<GameState>("playing");
+  const [gameState, setGameState] = useState<GameState>(
+    initialE2EState.current?.gameState ?? "playing"
+  );
   const [isWinModalVisible, setIsWinModalVisible] = useState(false);
   const [movingTiles, setMovingTiles] = useState<AnimatedSlideTile[]>([]);
   const [hasFinePointer, setHasFinePointer] = useState(false);
-  const hasShownWinAlert = useRef(false);
+  const hasShownWinAlert = useRef(
+    initialE2EState.current?.hasShownWinAlert ?? false
+  );
   const isAnimating = useRef(false);
   const moveId = useRef(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const { width } = useWindowDimensions();
 
   const boardPixelSize = Math.min(
@@ -61,7 +71,9 @@ export function App() {
   );
   const gap = BOARD_GAP;
   const tileSize = (boardPixelSize - gap * (BOARD_SIZE + 1)) / BOARD_SIZE;
-  const shouldShowArrowControls = Platform.OS === "web" && hasFinePointer;
+  const shouldShowArrowControls =
+    Platform.OS === "web" &&
+    (hasFinePointer || initialE2EState.current?.showArrowControls === true);
 
   useEffect(() => {
     let isMounted = true;
@@ -210,6 +222,58 @@ export function App() {
     [handleMove]
   );
 
+  const handleTouchStart = useCallback((event: GestureResponderEvent) => {
+    const nativeEvent =
+      event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
+        changedTouches?: { pageX?: number; pageY?: number }[];
+      };
+
+    touchStart.current = {
+      x: nativeEvent.pageX ?? nativeEvent.changedTouches?.[0]?.pageX ?? 0,
+      y: nativeEvent.pageY ?? nativeEvent.changedTouches?.[0]?.pageY ?? 0
+    };
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (event: GestureResponderEvent) => {
+      const start = touchStart.current;
+      touchStart.current = null;
+
+      if (!start) {
+        return;
+      }
+
+      const nativeEvent =
+        event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
+          changedTouches?: { pageX?: number; pageY?: number }[];
+        };
+      const endX = nativeEvent.pageX ?? nativeEvent.changedTouches?.[0]?.pageX;
+      const endY = nativeEvent.pageY ?? nativeEvent.changedTouches?.[0]?.pageY;
+
+      if (endX === undefined || endY === undefined) {
+        return;
+      }
+
+      const dx = endX - start.x;
+      const dy = endY - start.y;
+
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
+        return;
+      }
+
+      handleMove(
+        Math.abs(dx) > Math.abs(dy)
+          ? dx > 0
+            ? "right"
+            : "left"
+          : dy > 0
+            ? "down"
+            : "up"
+      );
+    },
+    [handleMove]
+  );
+
   useEffect(() => {
     if (
       typeof window === "undefined" ||
@@ -239,6 +303,31 @@ export function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleMove]);
+
+  useEffect(() => {
+    if (
+      !initialE2EState.current ||
+      typeof window === "undefined" ||
+      typeof window.addEventListener !== "function" ||
+      typeof window.removeEventListener !== "function"
+    ) {
+      return undefined;
+    }
+
+    function handleE2ESwipeLeft() {
+      handleMove("left");
+    }
+
+    window.addEventListener(
+      "react-native-2048:e2e-swipe-left",
+      handleE2ESwipeLeft
+    );
+    return () =>
+      window.removeEventListener(
+        "react-native-2048:e2e-swipe-left",
+        handleE2ESwipeLeft
+      );
   }, [handleMove]);
 
   const startNewGame = useCallback(() => {
@@ -284,6 +373,8 @@ export function App() {
             gap={gap}
             isGameOver={gameState === "lost"}
             onRestart={startNewGame}
+            onTouchEnd={handleTouchEnd}
+            onTouchStart={handleTouchStart}
           />
 
           {shouldShowArrowControls && <ArrowControls onMove={handleMove} />}

@@ -7,9 +7,9 @@ describe("ArrowControls", () => {
     const { getByLabelText } = render(<ArrowControls onMove={onMove} />);
 
     fireEvent.press(getByLabelText("Move up"));
-    fireEvent.press(getByLabelText("Move back"));
+    fireEvent.press(getByLabelText("Move left"));
     fireEvent.press(getByLabelText("Move down"));
-    fireEvent.press(getByLabelText("Move forward"));
+    fireEvent.press(getByLabelText("Move right"));
 
     expect(onMove).toHaveBeenNthCalledWith(1, "up");
     expect(onMove).toHaveBeenNthCalledWith(2, "left");

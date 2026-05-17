@@ -33,7 +33,9 @@ const meta = {
     tileSize: 77.5,
     gap: 10,
     isGameOver: false,
-    onRestart: fn()
+    onRestart: fn(),
+    onTouchEnd: fn(),
+    onTouchStart: fn()
   },
   parameters: {
     layout: "centered"

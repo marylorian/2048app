@@ -6,22 +6,24 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(238, 228, 218, 0.82)"
+    backgroundColor: "#f9f6f2"
   },
   overlayTitle: {
-    color: "#776e65",
+    backgroundColor: "#f9f6f2",
+    color: "#000000",
     fontSize: 34,
     fontWeight: "900",
     marginBottom: 16
   },
   overlayButton: {
     borderRadius: 8,
-    backgroundColor: "#8f7a66",
+    backgroundColor: "#ffffff",
     paddingHorizontal: 20,
     paddingVertical: 12
   },
   overlayButtonText: {
-    color: "#f9f6f2",
+    backgroundColor: "#ffffff",
+    color: "#000000",
     fontSize: 17,
     fontWeight: "800"
   }

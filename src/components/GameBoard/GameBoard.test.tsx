@@ -22,6 +22,8 @@ describe("GameBoard", () => {
         gap={10}
         isGameOver={false}
         onRestart={jest.fn()}
+        onTouchEnd={jest.fn()}
+        onTouchStart={jest.fn()}
       />
     );
 
@@ -53,6 +55,8 @@ describe("GameBoard", () => {
         gap={10}
         isGameOver={false}
         onRestart={jest.fn()}
+        onTouchEnd={jest.fn()}
+        onTouchStart={jest.fn()}
       />
     );
 
@@ -71,6 +75,8 @@ describe("GameBoard", () => {
         gap={10}
         isGameOver
         onRestart={jest.fn()}
+        onTouchEnd={jest.fn()}
+        onTouchStart={jest.fn()}
       />
     );
 

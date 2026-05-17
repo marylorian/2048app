@@ -1,4 +1,9 @@
-import { Animated, View, type GestureResponderHandlers } from "react-native";
+import {
+  Animated,
+  View,
+  type GestureResponderEvent,
+  type GestureResponderHandlers
+} from "react-native";
 import { BOARD_SIZE } from "../../constants";
 import type { AnimatedSlideTile, Board } from "../../types";
 import { GameOverOverlay } from "../GameOverOverlay";
@@ -15,6 +20,8 @@ type GameBoardProps = {
   gap: number;
   isGameOver: boolean;
   onRestart: () => void;
+  onTouchEnd: (event: GestureResponderEvent) => void;
+  onTouchStart: (event: GestureResponderEvent) => void;
 };
 
 export function GameBoard({
@@ -25,12 +32,16 @@ export function GameBoard({
   tileSize,
   gap,
   isGameOver,
-  onRestart
+  onRestart,
+  onTouchEnd,
+  onTouchStart
 }: GameBoardProps) {
   return (
     <Animated.View
       {...panHandlers}
       accessibilityLabel="2048 game board"
+      onTouchEnd={onTouchEnd}
+      onTouchStart={onTouchStart}
       style={[
         styles.board,
         {
