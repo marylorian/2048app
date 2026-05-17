@@ -12,7 +12,7 @@ export function AppHeader({ onRestart }: AppHeaderProps) {
       <View>
         <Text style={styles.title}>2048</Text>
         <Text style={styles.subtitle}>
-          Swipe tiles. Match numbers. Reach 2048.
+          Swipe tiles. Match numbers. Reach 2048 and beyond.
         </Text>
       </View>
 

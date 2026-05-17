@@ -9,7 +9,9 @@ describe("AppHeader", () => {
     );
 
     expect(getByText("2048")).toBeTruthy();
-    expect(getByText("Swipe tiles. Match numbers. Reach 2048.")).toBeTruthy();
+    expect(
+      getByText("Swipe tiles. Match numbers. Reach 2048 and beyond.")
+    ).toBeTruthy();
 
     fireEvent.press(getByLabelText("Start a new game"));
     expect(onRestart).toHaveBeenCalledTimes(1);

@@ -1,7 +1,7 @@
 import type { Animated } from "react-native";
 
 export type Direction = "up" | "right" | "down" | "left";
-export type GameState = "playing" | "won" | "lost";
+export type GameState = "playing" | "lost";
 export type Board = number[][];
 export type CellPosition = [row: number, col: number];
 

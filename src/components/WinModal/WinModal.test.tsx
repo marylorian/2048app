@@ -10,7 +10,11 @@ describe("WinModal", () => {
     );
 
     expect(getByText("2048!")).toBeTruthy();
-    expect(getByText("Congratulations, you made the 2048 tile.")).toBeTruthy();
+    expect(
+      getByText(
+        "Congratulations, you made the 2048 tile. Keep going for 4096 and beyond."
+      )
+    ).toBeTruthy();
 
     fireEvent.press(getByText("Continue"));
     fireEvent.press(getByText("Restart"));

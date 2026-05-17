@@ -53,7 +53,8 @@ export function WinModal({ visible, onContinue, onRestart }: WinModalProps) {
         >
           <Text style={styles.winTitle}>2048!</Text>
           <Text style={styles.winText}>
-            Congratulations, you made the 2048 tile.
+            Congratulations, you made the 2048 tile. Keep going for 4096 and
+            beyond.
           </Text>
           <View style={styles.winActions}>
             <Pressable

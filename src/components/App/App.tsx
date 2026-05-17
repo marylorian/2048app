@@ -47,6 +47,7 @@ export function App() {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>("playing");
+  const [isWinModalVisible, setIsWinModalVisible] = useState(false);
   const [movingTiles, setMovingTiles] = useState<AnimatedSlideTile[]>([]);
   const [hasFinePointer, setHasFinePointer] = useState(false);
   const hasShownWinAlert = useRef(false);
@@ -101,8 +102,7 @@ export function App() {
   const finishMove = useCallback((nextBoard: Board) => {
     if (hasWon(nextBoard) && !hasShownWinAlert.current) {
       hasShownWinAlert.current = true;
-      setGameState("won");
-      return;
+      setIsWinModalVisible(true);
     }
 
     if (!hasAvailableMove(nextBoard)) {
@@ -248,8 +248,17 @@ export function App() {
     setBoard(createInitialBoard());
     setScore(0);
     setGameState("playing");
+    setIsWinModalVisible(false);
     hasShownWinAlert.current = false;
   }, []);
+
+  const continueAfterWin = useCallback(() => {
+    setIsWinModalVisible(false);
+
+    if (!hasAvailableMove(board)) {
+      setGameState("lost");
+    }
+  }, [board]);
 
   return (
     <SafeAreaProvider>
@@ -280,8 +289,8 @@ export function App() {
           {shouldShowArrowControls && <ArrowControls onMove={handleMove} />}
 
           <WinModal
-            visible={gameState === "won"}
-            onContinue={() => setGameState("playing")}
+            visible={isWinModalVisible}
+            onContinue={continueAfterWin}
             onRestart={startNewGame}
           />
         </View>
