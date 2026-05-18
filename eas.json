@@ -4,18 +4,36 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "internal": {
+      "distribution": "internal",
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "simulator": {
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
       "ios": {
         "simulator": true
       }
     },
     "production": {
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
       "android": {
         "buildType": "app-bundle"
       },
