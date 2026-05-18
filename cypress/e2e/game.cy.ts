@@ -161,7 +161,7 @@ function checkCriticalAndSeriousA11y(context?: string) {
 
   if (context) {
     cy.get(context).should("exist");
-    cy.checkA11y(context, undefined, logA11yViolations);
+    cy.checkA11y(context, options, logA11yViolations);
     return;
   }
 
@@ -275,7 +275,7 @@ describe("2048 game", () => {
     cy.contains("Game over").should("be.visible");
     expectScore(128);
     expectBestScore(256);
-    checkCriticalAndSeriousA11y();
+    checkCriticalAndSeriousA11y("[data-testid='game-over-overlay']");
 
     cy.contains("Try again").click();
 
