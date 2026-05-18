@@ -29,7 +29,10 @@
     "build:android:apk": "npx eas-cli build --platform android --profile preview",
     "build:ios": "npx eas-cli build --platform ios --profile production",
     "build:ios:simulator": "npx eas-cli build --platform ios --profile simulator",
-    "build:native": "npx eas-cli build --platform all --profile production"
+    "build:native": "npx eas-cli build --platform all --profile production",
+    "submit:android:internal": "npx eas-cli submit --platform android --profile internal",
+    "submit:android:closed": "npx eas-cli submit --platform android --profile closed",
+    "submit:android:production": "npx eas-cli submit --platform android --profile production"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",

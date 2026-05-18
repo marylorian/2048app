@@ -14,7 +14,9 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.mariialobareva.reactnative2048"
+      "package": "com.mariialobareva.reactnative2048",
+      "versionCode": 1,
+      "permissions": []
     },
     "web": {
       "bundler": "metro"

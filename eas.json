@@ -15,7 +15,27 @@
       }
     },
     "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
       "autoIncrement": true
+    }
+  },
+  "submit": {
+    "internal": {
+      "android": {
+        "track": "internal"
+      }
+    },
+    "closed": {
+      "android": {
+        "track": "alpha"
+      }
+    },
+    "production": {
+      "android": {
+        "track": "production"
+      }
     }
   }
 }
