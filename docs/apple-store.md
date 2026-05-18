@@ -8,19 +8,27 @@
    npm run check
    ```
 
-2. Build the signed iOS app for App Store Connect:
+2. Set up iOS credentials once from an interactive terminal:
+
+   ```sh
+   npm run credentials:ios
+   ```
+
+   Let EAS create or reuse the Apple distribution certificate and provisioning profile. Non-interactive EAS builds cannot create missing Apple credentials for you.
+
+3. Build the signed iOS app for App Store Connect:
 
    ```sh
    npm run build:ios
    ```
 
-3. Submit the latest iOS build to App Store Connect and TestFlight:
+4. Submit the latest iOS build to App Store Connect and TestFlight:
 
    ```sh
    npm run submit:ios
    ```
 
-4. After TestFlight validation and App Store Connect metadata are complete, submit the build for App Review in App Store Connect.
+5. After TestFlight validation and App Store Connect metadata are complete, submit the build for App Review in App Store Connect.
 
 ## App Store Connect Setup
 
@@ -32,6 +40,7 @@
 - Complete privacy details. This app stores the best score locally on the device and does not collect personal data.
 - Complete accessibility support details in App Store Connect.
 - Configure App Store Connect API credentials with EAS for CI or use the interactive Apple sign-in flow locally.
+- EAS versioning uses the remote version source, so iOS build numbers are incremented by EAS and should not be duplicated in `app.json`.
 
 ## Release Notes
 
