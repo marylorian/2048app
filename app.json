@@ -1,16 +1,19 @@
 {
   "expo": {
     "name": "2048",
-    "slug": "react-native-2048",
+    "slug": "app2048",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "splash": {
       "backgroundColor": "#f6f2e9"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.mariialobareva.reactnative2048",
+      "buildNumber": "1",
       "supportsTablet": true
     },
     "android": {
@@ -21,6 +24,14 @@
     "web": {
       "bundler": "metro"
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4ebe4fe2-dc7f-455f-8fb6-e1221f69424c"
+      }
+    },
+    "owner": "marylorians-organization"
   }
 }
