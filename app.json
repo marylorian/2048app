@@ -8,13 +8,14 @@
     "splash": {
       "backgroundColor": "#f6f2e9"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.mariialobareva.reactnative2048",
       "buildNumber": "1",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.mariialobareva.reactnative2048",
@@ -24,9 +25,7 @@
     "web": {
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-font"
-    ],
+    "plugins": ["expo-font"],
     "extra": {
       "eas": {
         "projectId": "4ebe4fe2-dc7f-455f-8fb6-e1221f69424c"

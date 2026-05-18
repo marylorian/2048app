@@ -26,7 +26,6 @@ export function GameOverOverlay({ onRestart }: GameOverOverlayProps) {
       style={[
         styles.overlay,
         {
-          opacity: overlayProgressRef.current,
           transform: [
             {
               scale: overlayProgressRef.current.interpolate({
