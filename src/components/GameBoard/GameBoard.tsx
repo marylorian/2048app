@@ -10,6 +10,7 @@ import { GameOverOverlay } from "../GameOverOverlay";
 import { SlidingTile } from "../SlidingTile";
 import { Tile } from "../Tile";
 import { styles } from "./styles";
+import { useMemo } from "react";
 
 type GameBoardProps = {
   board: Board;
@@ -36,6 +37,11 @@ export function GameBoard({
   onTouchEnd,
   onTouchStart
 }: GameBoardProps) {
+  const boardMatrix = useMemo(
+    () => Array.from({ length: BOARD_SIZE * BOARD_SIZE }),
+    []
+  );
+
   return (
     <Animated.View
       {...panHandlers}
@@ -53,7 +59,7 @@ export function GameBoard({
       ]}
       testID="game-board"
     >
-      {Array.from({ length: BOARD_SIZE * BOARD_SIZE }, (_, index) => (
+      {boardMatrix.map((_, index) => (
         <View
           key={`cell-${index}`}
           accessible={false}

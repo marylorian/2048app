@@ -1,3 +1,6 @@
+import { ArrowButtonName } from "../components/ArrowButton/ArrowButton";
+import { Direction } from "../types";
+
 export const BOARD_SIZE = 4;
 export const WIN_TILE = 2048;
 export const BOARD_GAP = 10;
@@ -24,4 +27,18 @@ export const TILE_COLORS: Record<number, TileColor> = {
   512: { background: "#edc850", text: "#f9f6f2" },
   1024: { background: "#edc53f", text: "#f9f6f2" },
   2048: { background: "#edc22e", text: "#f9f6f2" }
+};
+
+export const ACCESSIBILITY_LABELS: Partial<Record<ArrowButtonName, string>> = {
+  "chevron-back": "Move left",
+  "chevron-down": "Move down",
+  "chevron-forward": "Move right",
+  "chevron-up": "Move up"
+};
+
+export const ARROW_TO_DIRECTION: Partial<Record<ArrowButtonName, Direction>> = {
+  "chevron-up": "up",
+  "chevron-back": "left",
+  "chevron-down": "down",
+  "chevron-forward": "right"
 };

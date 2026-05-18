@@ -1,24 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated,
-  Easing,
   type GestureResponderEvent,
-  PanResponder,
-  type PanResponderGestureState,
   Platform,
   useWindowDimensions,
   View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import {
-  BOARD_GAP,
-  BOARD_HORIZONTAL_MARGIN,
-  BOARD_MAX_PIXEL_SIZE,
-  BOARD_SIZE,
-  SLIDE_DURATION,
-  SWIPE_THRESHOLD
-} from "../../constants";
+import { BOARD_GAP, SWIPE_THRESHOLD } from "../../constants";
 import {
   loadStoredBestScore,
   storeBestScore
@@ -42,7 +31,23 @@ import { GameBoard } from "../GameBoard";
 import { ScoreBox } from "../ScoreBox";
 import { WinModal } from "../WinModal";
 import { styles } from "./styles";
-import { getE2EInitialState } from "./utils";
+import {
+  APP_SAFE_AREA_EDGES,
+  KEY_TO_DIRECTION,
+  createPanResponder,
+  getAnimatedTiles,
+  getBoardPixelSize,
+  getE2EInitialState,
+  getFinePointerQuery,
+  getMoveDirection,
+  getTileSize,
+  getTouchEndCoordinates,
+  getTouchStartCoordinates,
+  isWeb,
+  playMovingAnimation,
+  subscribeToFinePointerQuery,
+  unsubscribeFromFinePointerQuery
+} from "./utils";
 
 export function App() {
   const initialE2EState = useRef(getE2EInitialState());
@@ -65,12 +70,9 @@ export function App() {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const { width } = useWindowDimensions();
 
-  const boardPixelSize = Math.min(
-    width - BOARD_HORIZONTAL_MARGIN,
-    BOARD_MAX_PIXEL_SIZE
-  );
+  const boardPixelSize = getBoardPixelSize(width);
   const gap = BOARD_GAP;
-  const tileSize = (boardPixelSize - gap * (BOARD_SIZE + 1)) / BOARD_SIZE;
+  const tileSize = getTileSize(boardPixelSize);
   const shouldShowArrowControls =
     Platform.OS === "web" &&
     (hasFinePointer || initialE2EState.current?.showArrowControls === true);
@@ -90,24 +92,17 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (Platform.OS !== "web" || typeof window === "undefined") {
-      return undefined;
-    }
-
-    const finePointerQuery = window.matchMedia("(pointer: fine)");
-
     function syncPointerType() {
+      const finePointerQuery = getFinePointerQuery();
       const hasTouchScreen = window.navigator.maxTouchPoints > 0;
-      setHasFinePointer(finePointerQuery.matches && !hasTouchScreen);
+      setHasFinePointer(!!finePointerQuery?.matches && !hasTouchScreen);
     }
 
     syncPointerType();
-    finePointerQuery.addEventListener?.("change", syncPointerType);
-    finePointerQuery.addListener?.(syncPointerType);
+    subscribeToFinePointerQuery(syncPointerType);
 
     return () => {
-      finePointerQuery.removeEventListener?.("change", syncPointerType);
-      finePointerQuery.removeListener?.(syncPointerType);
+      unsubscribeFromFinePointerQuery(syncPointerType);
     };
   }, []);
 
@@ -143,12 +138,7 @@ export function App() {
       const nextScore = score + gainedScore;
       const nextBestScore = Math.max(bestScore, nextScore);
       const nextMoveId = moveId.current + 1;
-      const animatedTiles = slideTiles.map((tile, index) => ({
-        ...tile,
-        id: `${nextMoveId}-${index}-${tile.fromRow}-${tile.fromCol}`,
-        translateX: new Animated.Value(0),
-        translateY: new Animated.Value(0)
-      }));
+      const animatedTiles = getAnimatedTiles(slideTiles, nextMoveId);
 
       moveId.current = nextMoveId;
       isAnimating.current = true;
@@ -160,24 +150,7 @@ export function App() {
         storeBestScore(nextBestScore);
       }
 
-      Animated.parallel(
-        animatedTiles.map((tile) =>
-          Animated.parallel([
-            Animated.timing(tile.translateX, {
-              toValue: (tile.toCol - tile.fromCol) * (tileSize + gap),
-              duration: SLIDE_DURATION,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true
-            }),
-            Animated.timing(tile.translateY, {
-              toValue: (tile.toRow - tile.fromRow) * (tileSize + gap),
-              duration: SLIDE_DURATION,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true
-            })
-          ])
-        )
-      ).start(() => {
+      playMovingAnimation(animatedTiles, tileSize).start(() => {
         if (moveId.current !== nextMoveId) {
           return;
         }
@@ -188,49 +161,20 @@ export function App() {
         finishMove(nextBoard);
       });
     },
-    [bestScore, board, finishMove, gameState, gap, score, tileSize]
+    [bestScore, board, finishMove, gameState, score, tileSize]
   );
 
   const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (
-          _,
-          gestureState: PanResponderGestureState
-        ) =>
-          Math.abs(gestureState.dx) > SWIPE_THRESHOLD ||
-          Math.abs(gestureState.dy) > SWIPE_THRESHOLD,
-        onPanResponderRelease: (_, gestureState: PanResponderGestureState) => {
-          const { dx, dy } = gestureState;
-
-          if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) {
-            return;
-          }
-
-          const direction =
-            Math.abs(dx) > Math.abs(dy)
-              ? dx > 0
-                ? "right"
-                : "left"
-              : dy > 0
-                ? "down"
-                : "up";
-
-          handleMove(direction);
-        }
-      }),
+    () => createPanResponder(handleMove),
     [handleMove]
   );
 
   const handleTouchStart = useCallback((event: GestureResponderEvent) => {
-    const nativeEvent =
-      event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
-        changedTouches?: { pageX?: number; pageY?: number }[];
-      };
+    const { x, y } = getTouchStartCoordinates(event);
 
     touchStart.current = {
-      x: nativeEvent.pageX ?? nativeEvent.changedTouches?.[0]?.pageX ?? 0,
-      y: nativeEvent.pageY ?? nativeEvent.changedTouches?.[0]?.pageY ?? 0
+      x,
+      y
     };
   }, []);
 
@@ -243,12 +187,7 @@ export function App() {
         return;
       }
 
-      const nativeEvent =
-        event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
-          changedTouches?: { pageX?: number; pageY?: number }[];
-        };
-      const endX = nativeEvent.pageX ?? nativeEvent.changedTouches?.[0]?.pageX;
-      const endY = nativeEvent.pageY ?? nativeEvent.changedTouches?.[0]?.pageY;
+      const { x: endX, y: endY } = getTouchEndCoordinates(event);
 
       if (endX === undefined || endY === undefined) {
         return;
@@ -261,37 +200,18 @@ export function App() {
         return;
       }
 
-      handleMove(
-        Math.abs(dx) > Math.abs(dy)
-          ? dx > 0
-            ? "right"
-            : "left"
-          : dy > 0
-            ? "down"
-            : "up"
-      );
+      handleMove(getMoveDirection({ dx, dy }));
     },
     [handleMove]
   );
 
   useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.addEventListener !== "function" ||
-      typeof window.removeEventListener !== "function"
-    ) {
+    if (!isWeb()) {
       return undefined;
     }
 
-    const keyToDirection: Partial<Record<string, Direction>> = {
-      ArrowUp: "up",
-      ArrowRight: "right",
-      ArrowDown: "down",
-      ArrowLeft: "left"
-    };
-
     function handleKeyDown(event: KeyboardEvent) {
-      const direction = keyToDirection[event.key];
+      const direction = KEY_TO_DIRECTION[event.key];
 
       if (!direction) {
         return;
@@ -306,12 +226,7 @@ export function App() {
   }, [handleMove]);
 
   useEffect(() => {
-    if (
-      !initialE2EState.current ||
-      typeof window === "undefined" ||
-      typeof window.addEventListener !== "function" ||
-      typeof window.removeEventListener !== "function"
-    ) {
+    if (!initialE2EState.current || !isWeb()) {
       return undefined;
     }
 
@@ -351,10 +266,7 @@ export function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        edges={["top", "right", "bottom", "left"]}
-        style={styles.screen}
-      >
+      <SafeAreaView edges={APP_SAFE_AREA_EDGES} style={styles.screen}>
         <StatusBar style="dark" />
         <View style={styles.container}>
           <AppHeader onRestart={startNewGame} />

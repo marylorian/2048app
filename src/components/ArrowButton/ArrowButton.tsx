@@ -2,25 +2,19 @@ import { Ionicons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 import { Pressable } from "react-native";
 import { styles } from "./styles";
+import { ACCESSIBILITY_LABELS } from "../../constants";
 
-type ArrowButtonProps = {
-  name: ComponentProps<typeof Ionicons>["name"];
+export type ArrowButtonName = ComponentProps<typeof Ionicons>["name"];
+
+export type ArrowButtonProps = {
+  name: ArrowButtonName;
   onPress: () => void;
-};
-
-const accessibilityLabels: Partial<
-  Record<ComponentProps<typeof Ionicons>["name"], string>
-> = {
-  "chevron-back": "Move left",
-  "chevron-down": "Move down",
-  "chevron-forward": "Move right",
-  "chevron-up": "Move up"
 };
 
 export function ArrowButton({ name, onPress }: ArrowButtonProps) {
   return (
     <Pressable
-      accessibilityLabel={accessibilityLabels[name] ?? "Move tile"}
+      accessibilityLabel={ACCESSIBILITY_LABELS[name] ?? "Move tile"}
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [
